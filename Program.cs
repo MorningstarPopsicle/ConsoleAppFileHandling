@@ -12,11 +12,6 @@ namespace ECommerceApp.Menu
         {
             (new MainMenu()).Menu();
 
-          int[] array = new int[5] {2,3,4,5,6};
-          foreach (var item in array)
-          {
-              Console.WriteLine(item);
-          }
         }
         
     }

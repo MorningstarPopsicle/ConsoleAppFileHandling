@@ -5,65 +5,64 @@ namespace ECommerceApp.Repositories
 {
     public class ProductRepo
     {
-        public static int myIndex = 0;
         private static int count = 1;
-        public static Products[] products = new Products[50];
+        public static List<Products> products;
         public ProductRepo()
         {
-            var product = new Products(1,"01","Sardine", 700, 12);
-            products[0] = product;
-            myIndex++;
+            products = new List<Products>();
+            string path = "Product.txt";
+            if (File.Exists(path))
+            {
+                var lines = File.ReadAllLines(path: "Product.txt");
+                foreach (var item in lines)
+                {
+                    var productNew = Products.FormatLine(item);
+                    products.Add(productNew);
+                }
+            }
+
+            var product = new Products(1, "01", "Sardine", 700, 12);
+            products.Add(product);
             count++;
 
         }
         public string AddProduct(string productName, decimal price, int quantity)
         {
-             string productNo =  $"{count.ToString("00")}";
+            string productNo = $"{count.ToString("00")}";
             var newProduct = new Products(count, productNo, productName, price, quantity);
-            if (myIndex == 0)
+            int keep = 0;
+            foreach (var item in products)
             {
-                products[0] = newProduct;
-                count++;
-                myIndex++;
-            }
-            else
-            {
-                bool isProductExist = false;
-                for (int i = 0; i < myIndex; i++)
+                if (item.ProductName == newProduct.ProductName)
                 {
-                    if (products[i].ProductName == productName)
-                    {
-                        isProductExist = true;
-                        products[i].Quantity += quantity;
-                        break;
-                    }
+                    item.Quantity += newProduct.Quantity;
+                    keep++;
+                    break;
                 }
 
-                if (!isProductExist)
-                {
-                    products[myIndex] = newProduct;
-                    count++;
-                    myIndex++;
-                    Console.WriteLine(myIndex);
-
-                }
             }
-
+            if(keep == 0)
+            {
+            products.Add(newProduct);
             Console.WriteLine($"You have successfully added {newProduct.ProductName}");
-            return newProduct.ProductNo;
-        }
-        public void RemoveProduct(string productName)
-        {
-            for (int i = 0; i < myIndex; i++)
-            {
-                if (products[i].ProductName == productName)
-                {
-                    products[i] = null;
-                }
+            count++;
             }
-            Console.WriteLine($"You have successfully removed a product ");
-
+             return newProduct.ProductNo;
+             
         }
+
+        // public void RemoveProduct(string productName)
+        // {
+        //     foreach(var item in products)
+        //     {
+        //         if (item.ProductName == productName)
+        //         {
+        //             item = null;
+        //         }
+        //     }
+        //     Console.WriteLine($"You have successfully removed a product ");
+
+        // }
 
         public void EditProduct(string productNo, string productName, decimal price, int quantity)
         {
@@ -82,20 +81,21 @@ namespace ECommerceApp.Repositories
         }
         public void ReturnProducts()
         {
-            Console.WriteLine($"MyIndex is {myIndex}");
-            for (int i = 0; i < myIndex; i++)
+            // Console.WriteLine($"MyIndex is {myIndex}");
+            foreach (var item in products)
             {
-                Console.WriteLine($"{i + 1}. Product Name: {products[i].ProductName} Price: {products[i].Price} Quantity: {products[i].Quantity} ");
+                Console.WriteLine($"{item.ProductNo}. Product Name: {item.ProductName} Price: {item.Price} Quantity: {item.Quantity} ");
+               
             }
 
         }
         public Products GetProduct(string productName)
         {
-            for (int i = 0; i < myIndex; i++)
+            foreach (var item in products)
             {
-                if (products[i] != null && products[i].ProductName.ToUpper() == productName.ToUpper())
+                if (item != null && item.ProductName.ToUpper() == productName.ToUpper())
                 {
-                    return products[i];
+                    return item;
                 }
             }
             return null;

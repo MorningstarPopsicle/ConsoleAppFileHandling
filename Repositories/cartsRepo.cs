@@ -6,7 +6,7 @@ namespace ECommerceApp.Repositories
     public class CartsRepo
     {
         private static int count = 1;
-        public static List<Carts> carts = new List<Carts>();
+        public static List<Carts> carts;
         private readonly ProductRepo productRepo;
         private readonly CustomerRepo customerRepo;
         public CartsRepo(ProductRepo _productRepo, CustomerRepo _customerRepo)
@@ -14,26 +14,42 @@ namespace ECommerceApp.Repositories
 
             productRepo = _productRepo;
             customerRepo = _customerRepo;
+
+            carts = new List<Carts>();
+            string path = "Carts.txt";
+            if (File.Exists(path))
+            {
+                var lines = File.ReadAllLines(path: "Carts.txt");
+                foreach (var item in lines)
+                {
+                    var cartNew = Carts.FormatLine(item);
+                    carts.Add(cartNew);
+                }
+            }
         }
         public void AddToCart(Customer customer, Products product, int quantity)
         {
-            string cartNo = $"{count.ToString("00")}"; 
+            
+            string cartNo = $"{count.ToString("00")}";
             int keep = 0;
-            for (int i = 0; i < carts.Count; i++)
+            foreach (var item in carts)
             {
-                if (carts[i].ProductName == product.ProductName)
+                if (customer.Email == CustomerRepo.customerLogIn && item.ProductName == product.ProductName)
                 {
-                    carts[i].Quantity += quantity;
+                    item.Quantity += quantity;
                     keep++;
                     break;
                 }
             }
+
             if (keep == 0)
             {
-                var newCart = new Carts(product.ProductName, quantity, cartNo);
+                var newCart = new Carts(product.ProductName, quantity, cartNo, customer.Email);
                 carts.Add(newCart);
+                Console.WriteLine($"You have successfully added your product to cart");
             }
-            Console.WriteLine($"You have successfully added your product to cart");
+
+
         }
         // public void RemoveInCart(Customer customer, Products product, int quantity)
         // {
@@ -50,11 +66,12 @@ namespace ECommerceApp.Repositories
         //     }
         //     Console.WriteLine($"You have successfully added your product to cart");
         // }
-        public void Printcart()
+        public void Printcart(List<Carts> cart)
         {
-            int i = 1;
-            foreach (var item in carts)
+
+            foreach (var item in cart)
             {
+                int i = 1;
                 Console.WriteLine($"{i}. {item.ProductName} {item.Quantity}");
                 i++;
             }
@@ -68,15 +85,16 @@ namespace ECommerceApp.Repositories
         public decimal GetTotalPrice(List<Carts> cart)
         {
             decimal total = 0;
-            foreach (var item in carts)
+            foreach (var item in cart)
             {
                 var product = productRepo.GetProduct(item.ProductName);
-                total += (item.Quantity * product.Price);
+                decimal c = item.Quantity * product.Price;
+                total += c;
             }
-            
+
             return total;
         }
-        
+
         // public Carts ClearCart()
         // {
         //     for(int i = 0; i < carts.Count; i++)

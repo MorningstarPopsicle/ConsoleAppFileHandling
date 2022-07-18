@@ -16,5 +16,12 @@ namespace ECommerceApp.Models
             Role = role;
             Wallet = 200m;
         }
+        internal static Staff FormatLine(string line)
+        {
+            var props = line.Split('\t');
+            return new Staff(int.Parse(props[0]), props[1], props[2], props[3], (Gender)Enum.Parse(typeof(Gender),props[4]),DateTime.Parse(props[5]),
+            props[6], props[7], props[8], props[9], (Role)Enum.Parse(typeof(Role),props[10]), decimal.Parse(props[11]));
+
+        }
     }
 }

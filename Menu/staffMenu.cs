@@ -10,7 +10,7 @@ namespace ECommerceApp.Menu
         
         StaffRepo staffRepo;
         ProductRepo productRepo;
-        CustomerRepo customerRepo;
+        // CustomerRepo customerRepo;
         CartsRepo cartsRepo;
         OrderRepo orderRepo;
         
@@ -92,26 +92,37 @@ namespace ECommerceApp.Menu
                     staffRepo.ReturnStaff();
                     RegisterStaff();
                     Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
                     ManagerMenu();
                     break;
                 case 2:
                     productRepo.ReturnProducts();
                     AddAProduct();
                     Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
                     ManagerMenu();
                     break;
                 case 3:
                     CheckCustomerOrder();
                     Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
                     ManagerMenu();
                     break;
                 case 4:
                     orderRepo.PrintAllOrder();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
                     ManagerMenu();
                     break;
                 case 0:
                     StaffMainMenu();
                     Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
                     break;
                 default:
                     Console.WriteLine("Invalid input, try again");
@@ -122,6 +133,7 @@ namespace ECommerceApp.Menu
         public void OtherStaffMenu()
         {
             Console.WriteLine("1. To check Customer's order");
+             Console.WriteLine("2. To check firm's order");
             Console.WriteLine("0. To return to  staff mainmenu");
             int option;
             while (!int.TryParse(Console.ReadLine(), out option))
@@ -134,11 +146,21 @@ namespace ECommerceApp.Menu
                 case 1:
                     CheckCustomerOrder();
                     Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
                     OtherStaffMenu();
+                    break;
+                case 2:
+                    orderRepo.PrintAllOrder();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
+                    ManagerMenu();
                     break;
                 case 0:
                     StaffMainMenu();
                     Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
                     break;
                 default:
                     Console.WriteLine("Invalid input, try again");
@@ -197,9 +219,9 @@ namespace ECommerceApp.Menu
         }
         public void CheckCustomerOrder()
         {
-            Console.Write("Enter Customer's ID");
-            int customerId = int.Parse(Console.ReadLine());
-            var customerOrder = orderRepo.PrintCustomerOrder(customerId);
+            // Console.Write("Enter Customer's ID");
+            // var customer = int.Parse(Console.ReadLine());
+            orderRepo.PrintCustomerOrder();
         }
 
     }

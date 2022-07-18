@@ -12,6 +12,12 @@ namespace ECommerceApp.Models
             Quantity = quantity;
 
         }
+        internal static Products FormatLine(string line)
+        {
+            var props = line.Split('\t');
+            return new Products(int.Parse(props[0]), props[1], props[2],  decimal.Parse(props[3]), int.Parse(props[4]) );
+
+        }
 
         public int Id {get; set;}
         public string ProductNo {get; set;}

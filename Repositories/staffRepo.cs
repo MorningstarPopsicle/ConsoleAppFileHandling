@@ -6,26 +6,35 @@ namespace ECommerceApp.Repositories
     public class StaffRepo
     {
         private static int count = 1;
-        public static int myIndex = 0;
         private static decimal wallet = 200m;
-        public static Staff[] staffs = new Staff[50];
+        public static List<Staff> staffs;
         public StaffRepo()
         {
+            staffs = new List<Staff>();
+            string path = "Staff.txt";
+            if (File.Exists(path))
+            {
+                var lines = File.ReadAllLines(path: "Staff.txt");
+                foreach (var item in lines)
+                {
+                    var staffNew = Staff.FormatLine(item);
+                    staffs.Add(staffNew);
+                }
+            }
             var staff = new Staff(1, "Popsicle", "Morningstar", "1234",
                        Gender.Female, DateTime.Parse("1960-07-20"), "1234", "08065374591", "Abk",
                        "Lucifer Morningstar", Role.Manager, 200);
-            staffs[0] = staff;
-            myIndex++;
+            staffs.Add(staff);
+
 
         }
         public void AddNewStaff(string fName, string lName, string email, Gender gender, DateTime dateofBirth,
                                string password, string cellNo, string address, string nextofKin, Role role)
         {
-            int id = ++count;
-            Staff staff = new Staff(id, fName, lName, email, gender, dateofBirth,
+            Staff staff = new Staff(count, fName, lName, email, gender, dateofBirth,
                                 password, cellNo, address, nextofKin, role, wallet);
-            staffs[myIndex] = staff;
-            myIndex++;
+            staffs.Add(staff);
+            count++;
 
         }
         public Staff Login(string email, string passWord)
@@ -39,11 +48,11 @@ namespace ECommerceApp.Repositories
         }
         public Staff GetManager(string email)
         {
-            for (int i = 0; i < myIndex; i++)
+            foreach (var item in staffs)
             {
-                if ((staffs[i] != null) && staffs[i].Role == Role.Manager)
+                if ((item != null) && item.Role == Role.Manager)
                 {
-                    return staffs[i];
+                    return item;
                 }
 
             }
@@ -53,18 +62,21 @@ namespace ECommerceApp.Repositories
 
         public void ReturnStaff()
         {
-            for (int i = 0; i < myIndex; i++)
+            int i = 1;
+            foreach (var item in staffs)
             {
-                Console.WriteLine($"{i + 1}. Staff Name: {staffs[i].FullName()} Staff E-mail: {staffs[i].Email} Staff CellNo: {staffs[i].PhoneNo} Staff Address: {staffs[i].Address} Staff Gender: {staffs[i].Gender}");
+                
+                Console.WriteLine($"Current staffs are: \n{i}. Staff Name: {item.FullName()}\t Staff E-mail: {item.Email} \tStaff CellNo: {item.PhoneNo} \tStaff Address: {item.Address} \tStaff Gender: {item.Gender}");
+                i++;
             }
         }
         public Staff GetStaff(string email)
         {
-            for (int i = 0; i < myIndex; i++)
+            foreach (var item in staffs)
             {
-                if ((staffs[i] != null) && staffs[i].Email == email)
+                if ((item != null) && item.Email == email)
                 {
-                    return staffs[i];
+                    return item;
                 }
 
             }

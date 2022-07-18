@@ -5,28 +5,42 @@ namespace ECommerceApp.Repositories
 {
     public class CustomerRepo
     {
-        public static int myIndex = 0;
         private static int count = 1;
-        public Customer[] customers = new Customer[50];
+        public static string customerLogIn;
+        public List <Customer> customers;
         public CustomerRepo()
         {
+            customers = new List<Customer>();
+            string path = "Customer.txt";
+            if(File.Exists(path))
+            {
+                var lines = File.ReadAllLines(path: "Customer.txt");
+                foreach (var item in lines)
+                {
+                    var customerNew = Customer.FormatLine(item);
+                    customers.Add(customerNew);
+                }
+            }
             var customer = new Customer(1, "Popsicle", "Morningstar", "1234",
                        Gender.Female, DateTime.Parse("1960-07-20"), "1234", "08065374591", "Abk",
                        "Lucifer Morningstar");
-            customers[0] = customer;
-            myIndex++;
+            customers.Add(customer);
+            customerLogIn = customer.Email;
+            count++;
+            
 
         }
         public void Register(string firstName, string lastName, string eMail, Gender gender, DateTime dateOfBirth,
                        string passWord, string phoneNo, string address, string nextOfKin)
         {
+             
             var customer = new Customer(count, firstName, lastName, eMail, gender, dateOfBirth,
                          passWord, phoneNo, address, nextOfKin);
-            customers[myIndex] = customer;
+            customers.Add(customer);
             Console.WriteLine($"You have successfully created an account and your customer number is {customer.CustomerNo}");
             Console.WriteLine($"We have given you a bonus of {customer.Wallet}.");
             count++;
-            myIndex++;
+            customerLogIn = customer.Email;
         }
         public Customer Login(string email, string passWord)
         {
@@ -39,11 +53,11 @@ namespace ECommerceApp.Repositories
         }
         public Customer GetCustomer(string email)
         {
-            for (int i = 0; i < (myIndex); i++)
+            foreach(var item in customers)
             {
-                if (customers[i] != null && customers[i].Email == email)
+                if (item != null && item.Email == email)
                 {
-                    return customers[i];
+                    return item;
                 }
 
             }
@@ -52,11 +66,11 @@ namespace ECommerceApp.Repositories
 
          public Customer GetCustomer(int id)
         {
-            for (int i = 0; i < (myIndex); i++)
+            foreach(var item in customers)
             {
-                if ((customers[i] != null) && customers[i].Id == id)
+                if ((item != null) && item.Id == id)
                 {
-                    return customers[i];
+                    return item;
                 }
 
             }

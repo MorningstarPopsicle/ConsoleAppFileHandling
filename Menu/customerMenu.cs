@@ -10,8 +10,8 @@ namespace ECommerceApp.Menu
         public Customer customer { get; set; }
         CustomerRepo customerRepo;
         OrderRepo orderRepo;
-        ProductRepo productRepo;
-        CartsRepo cartRepo;
+        // ProductRepo productRepo;
+        // CartsRepo cartRepo;
         public CustomerMenu(CustomerRepo _customerRepo, OrderRepo _orderRepo)
         {
             customerRepo = _customerRepo;
@@ -68,7 +68,9 @@ namespace ECommerceApp.Menu
         public void CustomerSubMenu()
         {
             Console.WriteLine("1. Buy a product");
-            Console.WriteLine("0. Back to Customer Menu");
+            Console.WriteLine("2. View cart");
+             Console.WriteLine("3. Pay");
+            Console.WriteLine("0. Log out");
             int option;
             while (!int.TryParse(Console.ReadLine(), out option))
             {
@@ -82,7 +84,19 @@ namespace ECommerceApp.Menu
                     BuyGoods();
                     CustomerSubMenu();
                     break;
+                case 2:
+
+                    orderRepo.ViewCart();
+                    CustomerSubMenu();
+                    break;
+                case 3:
+
+                    orderRepo.Pay();
+                    CustomerSubMenu();
+                    break;
+
                 case 0:
+                    orderRepo.LogOut();
                     CustomerMainMenu();
                     break;
                 default:
@@ -94,12 +108,9 @@ namespace ECommerceApp.Menu
         }
         private void BuyGoods()
         {
-            Console.WriteLine(" Enter customer email: ");
-            string email = Console.ReadLine();
-            var customer = customerRepo.GetCustomer(email);
+            var customer = customerRepo.GetCustomer(CustomerRepo.customerLogIn);
             orderRepo.BuyProduct(customer);
-        }
-        
+        }    
         public void RegisterCustomer()
         {
             Console.WriteLine("Enter first name here: ");

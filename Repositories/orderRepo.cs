@@ -1,5 +1,6 @@
 using System;
 using ECommerceApp.Models;
+using ECommerceApp.Menu;
 using System.Collections.Generic;
 using System.Text;
 using ECommerceApp.Enums;
@@ -8,14 +9,14 @@ namespace ECommerceApp.Repositories
     public class OrderRepo
     {
 
-        public static int myIndex = 0;
         private static int count = 1;
         private readonly ProductRepo productRepo;
         private readonly CustomerRepo customerRepo;
         private readonly StaffRepo staffRepo;
         private readonly CartsRepo cartsRepo;
-        List<Carts> cart = new List<Carts>();
-        public Order[] orders = new Order[50];
+        // private readonly CustomerMenu customerMenu;
+        public static List<Carts> cart;
+        public List<Order> orders;
         public OrderRepo(ProductRepo _productRepo, CustomerRepo _customerRepo,
                           CartsRepo _cartsRepo,
                          StaffRepo _staffRepo)
@@ -24,18 +25,40 @@ namespace ECommerceApp.Repositories
             customerRepo = _customerRepo;
             cartsRepo = _cartsRepo;
             staffRepo = _staffRepo;
+            // customerMenu = _customerMenu;
+            orders = new List<Order>();
+            string path = "Orders.txt";
+            if (File.Exists(path))
+            {
+                var lines = File.ReadAllLines(path: "Orders.txt");
+                foreach (var item in lines)
+                {
+                    var orderNew = Order.FormatLine(item);
+                    orders.Add(orderNew);
+                }
+            }
         }
-        public void PlaceOrder(int id, int customerId, string referenceNo, string customerName, List<Carts> cart, decimal totalPrice)
+        public void PlaceOrder(int id, int customerId, string referenceNo, string customerName, decimal totalPrice)
         {
-            var newOrder = new Order(id, customerId, referenceNo, customerName, cart, totalPrice);
-            orders[myIndex] = newOrder;
-            Console.WriteLine($"You have successfully ordered your product");
+            var newOrder = new Order(id, customerId, referenceNo, customerName, totalPrice);
+            orders.Add(newOrder);
+            // Console.WriteLine($"You have successfully ordered your product");
             count++;
-            myIndex++;
         }
         public void BuyProduct(Customer customer)
         {
+            // bool leave = false;
             string allAvailable = GetAvailableProduct();
+            //  if (allAvailable == null)
+            // {
+            //    while(!leave)
+            //     {
+            //         Console.WriteLine("There are no products available \n Enter any key to return to menu");
+            //         Console.ReadKey();
+            //         Console.WriteLine();
+            //         leave = true;
+            //     }
+            // }
             Console.Write("Please choose a product from the available product above: ");
             string chosenProduct;
             do
@@ -48,96 +71,136 @@ namespace ECommerceApp.Repositories
             int quantity = int.Parse(Console.ReadLine());
             cartsRepo.AddToCart(customer, product, quantity);
 
-            Console.WriteLine($"You have successfully addedd {product.ProductName} to cart. \tEnter 1 To add more products to cart\tEnter 2 To remove product from cart\t 0 To continue");
+            Console.WriteLine($"You have successfully added {product.ProductName} to cart. \tEnter 1 To add more products to cart\tEnter 2 To remove product from cart\t 0 To return to menu");
+            ReduceProductQuantity(CartsRepo.carts);
             int option;
-            bool makePayment = false;
+            bool exit = false;
             while (!int.TryParse(Console.ReadLine(), out option))
             {
                 Console.WriteLine("Invalid input. Enter 1, 2 or 0");
+
+            }
+            while (!exit)
+            {
+                if (option == 1)
+                {
+                    BuyProduct(customer);
+                    exit = true;
+                }
+                else if (option == 2)
+                {
+                    ReduceProduct(CartsRepo.carts);
+                    exit = true;
+                    // makePayment = true;
+                }
+                else if (option == 0)
+                {
+                    exit = true;
+                    // customerMenu.CustomerSubMenu();
+                    // makePayment = true;
+
+                }
+            }
+
+        }
+        public void ViewCart()
+        {
+            cartsRepo.Printcart(CartsRepo.carts);
+            Console.WriteLine("Do you want to make payments? If yes, click 1 and if no, click 0 ");
+            int option;
+            while (!int.TryParse(Console.ReadLine(), out option))
+            {
+                Console.WriteLine("Invalid input. Enter 1 or 0");
             }
             if (option == 1)
             {
-                Console.Write("Enter email here: ");
-                string email = Console.ReadLine();
-                var currentCustomer = customerRepo.GetCustomer(email);
-                BuyProduct(currentCustomer);
+                Pay();
             }
-            else if (option == 2)
+        }
+        public void LogOut()
+        {
+            var customer = customerRepo.GetCustomer(CustomerRepo.customerLogIn);
+            customer.Email = null;
+        }
+        public void Pay()
+        {
+            // bool flag = false;
+            bool exit = false;
+            var customer = customerRepo.GetCustomer(CustomerRepo.customerLogIn);
+            var bill = PrintBill();
+            Console.WriteLine($"Your bill is {bill}");
+            while (!exit)
             {
-                ReduceProduct(cart);
-                makePayment = true;
-            }
-            else if(option == 0)
-            {
-                makePayment = true;
-            }
-            
-            if (makePayment)
-            {
-                cartsRepo.Printcart();
-                var bill = PrintBill();
-                Console.WriteLine($"Your bill is {bill}");
                 if (customer.Wallet >= bill)
                 {
                     customer.Wallet -= bill;
 
                     PayToManager();
-                    Console.WriteLine("Thanks for your patronage");
-                    ReduceProductQuantity(cart);
-                    
+                    Console.WriteLine($"Thanks for your patronage, your new balance is {customer.Wallet}");
+                    PlaceOrder(count, customer.Id, customer.Email, customer.FullName(), bill);
+                    CartsRepo.carts.Clear();
+                    exit = true;
+                    // customerMenu.CustomerSubMenu();
                 }
                 else
                 {
-                    bool flag = false;
-                    while (customer.Wallet < bill)
+                    while (!exit)
                     {
-                        Console.Write("Insufficient balance, Please enter 1 to fund your Wallet or any other key to cancel order:");
-                        if (int.Parse(Console.ReadLine()) == 1)
+                        while (customer.Wallet < bill)
                         {
-                            customerRepo.FundWallet(customer);
+                            Console.Write("Insufficient balance, Please enter 1 to fund your Wallet or 0 to cancel order: ");
+                            int option;
+                            if (!int.TryParse(Console.ReadLine(), out option))
+                            {
+                                Console.WriteLine("Invalid input. Enter 1 or 0");
+                            }
+                            if (option == 1)
+                            {
+                                customerRepo.FundWallet(customer);
+                            }
+                            else if (option == 0)
+                            {
+                                exit = true;
+                                break;
+                            }
                         }
-                        else
+                        if (!exit)
                         {
-                            flag = true;
-                        }
-                    
-                        if (flag)
-                        {
-                            break;
+                            customer.Wallet -= bill;
+                            PayToManager();
+                            Console.WriteLine($"Thanks for your patronage, your new balance is {customer.Wallet}");
+                            PlaceOrder(count, customer.Id, customer.Email, customer.FullName(), bill);
+                            CartsRepo.carts.Clear();
+                            exit = true;
+                            // customerMenu.CustomerSubMenu();
                         }
                     }
-                    
-                    if (!flag)
-                    {
-                        customer.Wallet -= bill;
-                        PayToManager();
-                        Console.WriteLine("Thanks for your patronage");
-                        ReduceProductQuantity(cart);
-                        
-                    }
+
+
+
                 }
             }
-
 
         }
 
         public string GetAvailableProduct()
         {
             StringBuilder allAvailable = new StringBuilder();
-            for (int i = 0; i < ProductRepo.myIndex; i++)
+            foreach (var item in ProductRepo.products)
             {
-                var product = ProductRepo.products[i];
-                if (product != null && product.Quantity > 0)
+                if (item != null && item.Quantity > 0)
                 {
-                    Print(product);
-                    allAvailable.Append($"{product.ProductName.ToUpper()},");
+                    Print(item);
+                    allAvailable.Append($"{item.ProductName.ToUpper()},");
                 }
             }
             return allAvailable.ToString();
         }
         private void Print(Products product)
         {
-            Console.WriteLine($"{product.ProductNo} {product.ProductName}\t{product.Price}");
+            
+                Console.WriteLine($"{product.Id} {product.ProductName}\t{product.Price}");
+            
         }
         private bool IsAvailable(string all, string choosed)
         {
@@ -146,6 +209,7 @@ namespace ECommerceApp.Repositories
         }
         public void ReduceProduct(List<Carts> cart)
         {
+            cartsRepo.Printcart(CartsRepo.carts);
             Console.Write("Enter product name: ");
             string productName = Console.ReadLine();
             Console.Write("Enter quantity: ");
@@ -160,7 +224,7 @@ namespace ECommerceApp.Repositories
         }
         public decimal PrintBill()
         {
-            var amount = cartsRepo.GetTotalPrice(cart);
+            var amount = cartsRepo.GetTotalPrice(CartsRepo.carts);
             return amount;
         }
         public void PayToManager()
@@ -183,51 +247,56 @@ namespace ECommerceApp.Repositories
 
 
         }
-        public decimal PrintCustomerOrder(int customerId)
+        public void PrintCustomerOrder()
         {
-            Console.Write("Enter Reference number here: ");
-            string refNo = Console.ReadLine();
+            Console.Write("Enter customer's ID here: ");
+            int iD = int.Parse(Console.ReadLine());
             decimal totalPrice = 0;
-            for (int i = 0; i < myIndex; i++)
+            foreach (var item in orders)
             {
-                if (orders[i].CustomerId == customerId)
+                if (item.CustomerId == iD)
 
                 {
-                    Console.WriteLine($"{orders[i].CustomerName} {orders[i].TotalPrice}");
-                    totalPrice += orders[i].TotalPrice;
+
+                    Console.WriteLine($"{item.CustomerName} {item.TotalPrice}");
+                    totalPrice += item.TotalPrice;
                 }
             }
-            return totalPrice;
+            //  return customerId;
 
         }
         public void PrintAllOrder()
         {
-            for (int i = 0; i < myIndex; i++)
+            int count = 1;
+            foreach (var item in orders)
             {
-                int count = 1;
-                if (orders[i] != null)
+
+                if (item != null)
                 {
-                    Console.WriteLine($"{count}{orders[i].CustomerName}\t {orders[i].TotalPrice}");
+
+                    Console.WriteLine($"{count}. {item.CustomerName}\t {item.TotalPrice}");
                     count++;
                 }
 
             }
         }
-        public Order GetOrder(string refNo)
+        public Order GetOrder()
         {
-            for (int i = 0; i < myIndex; i++)
+            Console.WriteLine("Enter customer email here: ");
+            var email = Console.ReadLine();
+            foreach (var item in orders)
             {
-                if (orders[i] != null && orders[i].ReferenceNo == refNo)
+                if (item != null && item.Email == email)
                 {
-                    return orders[i];
+                    return item;
                 }
             }
             return null;
 
         }
-        
     }
 }
+
 
 
 

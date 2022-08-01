@@ -7,8 +7,8 @@ namespace ECommerceApp.Models
         {
             Id = id;
             ProductNo = productNo;
-            Price = price;
             ProductName = productName;
+            Price = price;
             Quantity = quantity;
 
         }
@@ -17,6 +17,10 @@ namespace ECommerceApp.Models
             var props = line.Split('\t');
             return new Products(int.Parse(props[0]), props[1], props[2],  decimal.Parse(props[3]), int.Parse(props[4]) );
 
+        }
+         public override string ToString()
+        {
+            return $"{Id}\t{ProductNo}\t{ProductName}\t{Price}\t{Quantity}";
         }
 
         public int Id {get; set;}

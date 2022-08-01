@@ -10,20 +10,27 @@ namespace ECommerceApp.Repositories
         public ProductRepo()
         {
             products = new List<Products>();
-            string path = "Product.txt";
-            if (File.Exists(path))
-            {
-                var lines = File.ReadAllLines(path: "Product.txt");
-                foreach (var item in lines)
-                {
-                    var productNew = Products.FormatLine(item);
-                    products.Add(productNew);
-                }
-            }
+            LoadFile();
+            // string path = "Product.txt";
+            // if (File.Exists(path))
+            // {
+            //     var lines = File.ReadAllLines(path: "Product.txt");
+            //     foreach (var item in lines)
+            //     {
+            //         var productNew = Products.FormatLine(item);
+            //         products.Add(productNew);
+            //     }
+            // }
 
             var product = new Products(1, "01", "Sardine", 700, 12);
             products.Add(product);
             count++;
+            // RefreshFile();
+            // TextWriter textWriter = new StreamWriter("Product.txt", true);
+            // textWriter.WriteLine(product.ToString());
+            // textWriter.Close();
+            // RefreshFile();
+            // count++;
 
         }
         public string AddProduct(string productName, decimal price, int quantity)
@@ -41,14 +48,18 @@ namespace ECommerceApp.Repositories
                 }
 
             }
-            if(keep == 0)
+            if (keep == 0)
             {
-            products.Add(newProduct);
-            Console.WriteLine($"You have successfully added {newProduct.ProductName}");
-            count++;
+                products.Add(newProduct);
+                // TextWriter textWriter = new StreamWriter("Product.txt", true);
+                // textWriter.WriteLine(newProduct.ToString());
+                // textWriter.Close();
+                Console.WriteLine($"You have successfully added {newProduct.ProductName}");
+                RefreshFile();
+                count++;
             }
-             return newProduct.ProductNo;
-             
+            return newProduct.ProductNo;
+
         }
 
         // public void RemoveProduct(string productName)
@@ -64,13 +75,22 @@ namespace ECommerceApp.Repositories
 
         // }
 
-        public void EditProduct(string productNo, string productName, decimal price, int quantity)
+        public void EditProduct()
         {
-            var product = GetProduct(productNo);
+            Console.Write("Enter Product Number ");
+            string productNo = Console.ReadLine();
+            Console.Write("Enter Product name ");
+            string productName = Console.ReadLine();
+            Console.Write("Enter price ");
+            decimal price = decimal.Parse(Console.ReadLine());
+            Console.Write("Enter quantity ");
+            int quantity = int.Parse(Console.ReadLine());
+            var product = GetProductforEdit(productNo);
             product.Price = price;
             product.ProductName = productName;
             product.Quantity = quantity;
-            Console.WriteLine($"The product has been edited. It is now{product.ProductName} {product.Price} {product.Quantity}");
+            Console.WriteLine($"The product has been edited. It is now {product.ProductName} {product.Price} {product.Quantity}");
+            RefreshFile();
         }
 
 
@@ -85,7 +105,7 @@ namespace ECommerceApp.Repositories
             foreach (var item in products)
             {
                 Console.WriteLine($"{item.ProductNo}. Product Name: {item.ProductName} Price: {item.Price} Quantity: {item.Quantity} ");
-               
+
             }
 
         }
@@ -99,6 +119,35 @@ namespace ECommerceApp.Repositories
                 }
             }
             return null;
+        }
+        public Products GetProductforEdit(string productNo)
+        {
+            foreach (var item in products)
+            {
+                if (item != null && item.ProductNo == productNo)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+        private void RefreshFile()
+        {
+            TextWriter writer = new StreamWriter("Product.txt");
+            foreach (var item in products)
+            {
+                writer.WriteLine(item);
+            }
+            writer.Flush();
+            writer.Close();
+        }
+        private void LoadFile()
+        {
+            StreamReader reader = new StreamReader("Product.txt");
+            while(!reader.EndOfStream){
+                products.Add(Products.FormatLine(reader.ReadLine()));
+            }
+            reader.Close();
         }
     }
 }

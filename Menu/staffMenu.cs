@@ -7,14 +7,14 @@ namespace ECommerceApp.Menu
 {
     public class StaffMenu
     {
-        
+
         StaffRepo staffRepo;
         ProductRepo productRepo;
         // CustomerRepo customerRepo;
         CartsRepo cartsRepo;
         OrderRepo orderRepo;
-        
-        
+
+
 
         public StaffMenu(StaffRepo _staffRepo, OrderRepo _orderRepo, ProductRepo _productrepo, CartsRepo _cartsRepo)
         {
@@ -41,7 +41,7 @@ namespace ECommerceApp.Menu
                     StaffLogin();
                     break;
                 case 0:
-                
+
                     break;
                 default:
                     Console.WriteLine("Invalid Input");
@@ -75,9 +75,13 @@ namespace ECommerceApp.Menu
         public void ManagerMenu()
         {
             Console.WriteLine("1. To add staff");
-            Console.WriteLine("2. To add product");
-            Console.WriteLine("3. To check customer's order");
-            Console.WriteLine("4. To check firm's order");
+            Console.WriteLine("2. To edit staff");
+            Console.WriteLine("3. To view staff");
+            Console.WriteLine("4. To add product");
+            Console.WriteLine("5. To edit product");
+            Console.WriteLine("6. To view product");
+            Console.WriteLine("7. To check customer's order");
+            Console.WriteLine("8. To check firm's order");
             Console.WriteLine("0. To return to staff mainmenu");
 
             int option;
@@ -89,29 +93,56 @@ namespace ECommerceApp.Menu
             switch (option)
             {
                 case 1:
-                    staffRepo.ReturnStaff();
                     RegisterStaff();
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
                     Console.WriteLine();
                     ManagerMenu();
                     break;
-                case 2:
-                    productRepo.ReturnProducts();
-                    AddAProduct();
-                    Console.WriteLine("Press any key to continue");
-                    Console.ReadKey();
-                    Console.WriteLine();
-                    ManagerMenu();
-                    break;
+                // case 2:
+                //     productRepo.ReturnProducts();
+                //     AddAProduct();
+                //     Console.WriteLine("Press any key to continue");
+                //     Console.ReadKey();
+                //     Console.WriteLine();
+                //     ManagerMenu();
+                //     break;
                 case 3:
-                    CheckCustomerOrder();
+                    ViewStaff();
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
                     Console.WriteLine();
                     ManagerMenu();
                     break;
                 case 4:
+                    AddAProduct();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
+                    ManagerMenu();
+                    break;
+                case 5:
+                    productRepo.EditProduct();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
+                    ManagerMenu();
+                    break;
+                case 6:
+                    ViewProduct();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
+                    ManagerMenu();
+                    break;
+                case 7:
+                    CheckCustomerOrder();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    Console.WriteLine();
+                    ManagerMenu();
+                    break;
+                case 8:
                     orderRepo.PrintAllOrder();
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
@@ -133,7 +164,7 @@ namespace ECommerceApp.Menu
         public void OtherStaffMenu()
         {
             Console.WriteLine("1. To check Customer's order");
-             Console.WriteLine("2. To check firm's order");
+            Console.WriteLine("2. To check firm's order");
             Console.WriteLine("0. To return to  staff mainmenu");
             int option;
             while (!int.TryParse(Console.ReadLine(), out option))
@@ -175,8 +206,27 @@ namespace ECommerceApp.Menu
             string fName = Console.ReadLine();
             Console.WriteLine("Enter last name here: ");
             string lName = Console.ReadLine();
-            Console.WriteLine("Enter emial here: ");
+            Console.WriteLine("Enter email here: ");
             string email = Console.ReadLine();
+            string check = "@";
+            bool isIn = email.Contains(check);
+            while (!(isIn))
+            {
+                Console.WriteLine("Invalid Input, enter email again");
+                email = Console.ReadLine();
+                isIn = email.Contains(check);
+
+            }
+            foreach (var item in StaffRepo.staffs)
+            {
+                if (item.Email == email)
+                {
+                    Console.WriteLine("This Email is not available, enter another username");
+                    email = Console.ReadLine();
+                }
+            }
+            Console.WriteLine("Enter password ");
+            string password = Console.ReadLine();
             Console.WriteLine("Choose Gender(1,2,3): ");
             int i = 1;
             foreach (Gender genderValue in Enum.GetValues(typeof(Gender)))
@@ -192,8 +242,6 @@ namespace ECommerceApp.Menu
                 Console.WriteLine("Invalid format");
                 Console.WriteLine("Enter date of birth again (yyyy-mm-dd):");
             }
-            Console.WriteLine("Enter password ");
-            string password = Console.ReadLine();
             Console.WriteLine("Enter Phone number: ");
             string cellNo = Console.ReadLine();
             Console.WriteLine("Enter address: ");
@@ -202,7 +250,7 @@ namespace ECommerceApp.Menu
             string nextofKin = Console.ReadLine();
             Role role = Role.Staff;
 
-            staffRepo.AddNewStaff(fName, lName, email, gender, dateOfBirth, password, cellNo,
+            staffRepo.AddNewStaff(fName, lName, email, password, gender, dateOfBirth, cellNo,
                                 address, nextofKin, role);
             Console.WriteLine($"Staff {lName} {fName} has been successfully added");
         }
@@ -216,12 +264,21 @@ namespace ECommerceApp.Menu
             Console.Write("Enter quantity here: ");
             int quantity = int.Parse(Console.ReadLine());
             productRepo.AddProduct(name, price, quantity);
+
         }
         public void CheckCustomerOrder()
         {
             // Console.Write("Enter Customer's ID");
             // var customer = int.Parse(Console.ReadLine());
             orderRepo.PrintCustomerOrder();
+        }
+        public void ViewStaff()
+        {
+            staffRepo.ReturnStaff();
+        }
+        public void ViewProduct()
+        {
+            productRepo.ReturnProducts();
         }
 
     }

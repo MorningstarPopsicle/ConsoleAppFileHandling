@@ -4,10 +4,7 @@ C:\Users\USER\Desktop\HUB WORKS\ECommerceApp\obj\Debug\net6.0\ECommerceApp.Assem
 C:\Users\USER\Desktop\HUB WORKS\ECommerceApp\obj\Debug\net6.0\ECommerceApp.AssemblyInfo.cs
 C:\Users\USER\Desktop\HUB WORKS\ECommerceApp\obj\Debug\net6.0\ECommerceApp.csproj.CoreCompileInputs.cache
 C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\bin\Debug\net6.0\ECommerceApp.exe
-C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\bin\Debug\net6.0\ECommerceApp.deps.json
-C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\bin\Debug\net6.0\ECommerceApp.runtimeconfig.json
 C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\bin\Debug\net6.0\ECommerceApp.dll
-C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\bin\Debug\net6.0\ECommerceApp.pdb
 C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\obj\Debug\net6.0\ECommerceApp.csproj.AssemblyReference.cache
 C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\obj\Debug\net6.0\ECommerceApp.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\obj\Debug\net6.0\ECommerceApp.AssemblyInfoInputs.cache
@@ -16,5 +13,9 @@ C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\obj\Debug\net6.0\ECommerceApp.csproj
 C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\obj\Debug\net6.0\ECommerceApp.dll
 C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\obj\Debug\net6.0\refint\ECommerceApp.dll
 C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\obj\Debug\net6.0\ECommerceApp.pdb
+C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\bin\Debug\net6.0\ECommerceApp.deps.json
+C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\bin\Debug\net6.0\ECommerceApp.runtimeconfig.json
+C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\bin\Debug\net6.0\ECommerceApp.pdb
 C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\obj\Debug\net6.0\ECommerceApp.genruntimeconfig.cache
 C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\obj\Debug\net6.0\ref\ECommerceApp.dll
+C:\Users\USER\Desktop\HUBWORKS\ECommerceApp\bin\Debug\net6.0\ECommerceApp.dll.config

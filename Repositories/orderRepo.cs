@@ -27,22 +27,27 @@ namespace ECommerceApp.Repositories
             staffRepo = _staffRepo;
             // customerMenu = _customerMenu;
             orders = new List<Order>();
-            string path = "Orders.txt";
-            if (File.Exists(path))
-            {
-                var lines = File.ReadAllLines(path: "Orders.txt");
-                foreach (var item in lines)
-                {
-                    var orderNew = Order.FormatLine(item);
-                    orders.Add(orderNew);
-                }
-            }
+            LoadFile();
+            // string path = "Orders.txt";
+            // if (File.Exists(path))
+            // {
+            //     var lines = File.ReadAllLines(path: "Orders.txt");
+            //     foreach (var item in lines)
+            //     {
+            //         var orderNew = Order.FormatLine(item);
+            //         orders.Add(orderNew);
+            //     }
+            // }
         }
         public void PlaceOrder(int id, int customerId, string referenceNo, string customerName, decimal totalPrice)
         {
             var newOrder = new Order(id, customerId, referenceNo, customerName, totalPrice);
             orders.Add(newOrder);
-            // Console.WriteLine($"You have successfully ordered your product");
+            // TextWriter textWriter = new StreamWriter("Order.txt", true);
+            // textWriter.WriteLine(newOrder.ToString());
+            // textWriter.Close();
+            // // Console.WriteLine($"You have successfully ordered your product");
+            RefreshFile();
             count++;
         }
         public void BuyProduct(Customer customer)
@@ -103,7 +108,7 @@ namespace ECommerceApp.Repositories
             }
 
         }
-        public void ViewCart()
+        public void ViewCart( )
         {
             cartsRepo.Printcart(CartsRepo.carts);
             Console.WriteLine("Do you want to make payments? If yes, click 1 and if no, click 0 ");
@@ -137,7 +142,8 @@ namespace ECommerceApp.Repositories
 
                     PayToManager();
                     Console.WriteLine($"Thanks for your patronage, your new balance is {customer.Wallet}");
-                    PlaceOrder(count, customer.Id, customer.Email, customer.FullName(), bill);
+                    Console.WriteLine($"{CustomerRepo.customerLogIn}");
+                    PlaceOrder(count, customer.Id, CustomerRepo.customerLogIn, customer.FullName(), bill);
                     CartsRepo.carts.Clear();
                     exit = true;
                     // customerMenu.CustomerSubMenu();
@@ -219,6 +225,9 @@ namespace ECommerceApp.Repositories
                 if (item.ProductName == productName && item.Quantity > quantity)
                 {
                     item.Quantity -= quantity;
+                    var product = productRepo.GetProduct(item.ProductName);
+                    product.Quantity += quantity;
+
                 }
             }
         }
@@ -249,12 +258,12 @@ namespace ECommerceApp.Repositories
         }
         public void PrintCustomerOrder()
         {
-            Console.Write("Enter customer's ID here: ");
-            int iD = int.Parse(Console.ReadLine());
+            Console.Write("Enter customer's email here: ");
+            string email = Console.ReadLine();
             decimal totalPrice = 0;
             foreach (var item in orders)
             {
-                if (item.CustomerId == iD)
+                if (item.Email == email)
 
                 {
 
@@ -293,6 +302,24 @@ namespace ECommerceApp.Repositories
             }
             return null;
 
+        }
+        private void RefreshFile()
+        {
+            TextWriter writer = new StreamWriter("Order.txt");
+            foreach (var item in orders)
+            {
+                writer.WriteLine(item);
+            }
+            writer.Flush();
+            writer.Close();
+        }
+        private void LoadFile()
+        {
+            StreamReader reader = new StreamReader("Order.txt");
+            while(!reader.EndOfStream){
+                orders.Add(Order.FormatLine(reader.ReadLine()));
+            }
+            reader.Close();
         }
     }
 }

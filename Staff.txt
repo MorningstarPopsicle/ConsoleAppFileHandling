@@ -1,0 +1,2 @@
+1	Popsicle	Morningstar	1234	1234	Female	7/20/1960 12:00:00 AM	08065374591	Abk	Lucifer Morningstar	Manager	200	ST5C60D
+2	Azeemah	Hamzat	ade@gmail.com	1234	Male	2/3/1980 12:00:00 AM	1	1	1	Staff	200	STA8E60

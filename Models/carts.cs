@@ -22,9 +22,11 @@ namespace ECommerceApp.Models
         {
             var props = line.Split('\t');
             return new Carts(props[0], int.Parse(props[1]), props[2], props[3]);
-
         }
-
+        public override string ToString()
+        {
+            return $"{ProductName}\t{Quantity}\t{CartId}\t{CustomerEmail}";
+        }
         
 
     }

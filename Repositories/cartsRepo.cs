@@ -16,20 +16,21 @@ namespace ECommerceApp.Repositories
             customerRepo = _customerRepo;
 
             carts = new List<Carts>();
-            string path = "Carts.txt";
-            if (File.Exists(path))
-            {
-                var lines = File.ReadAllLines(path: "Carts.txt");
-                foreach (var item in lines)
-                {
-                    var cartNew = Carts.FormatLine(item);
-                    carts.Add(cartNew);
-                }
-            }
+            LoadFile();
+            // string path = "Carts.txt";
+            // if (File.Exists(path))
+            // {
+            //     var lines = File.ReadAllLines(path: "Carts.txt");
+            //     foreach (var item in lines)
+            //     {
+            //         var cartNew = Carts.FormatLine(item);
+            //         carts.Add(cartNew);
+            //     }
+            // }
         }
         public void AddToCart(Customer customer, Products product, int quantity)
         {
-            
+
             string cartNo = $"{count.ToString("00")}";
             int keep = 0;
             foreach (var item in carts)
@@ -46,7 +47,13 @@ namespace ECommerceApp.Repositories
             {
                 var newCart = new Carts(product.ProductName, quantity, cartNo, customer.Email);
                 carts.Add(newCart);
+                // TextWriter textWriter = new StreamWriter("Cart.txt", true);
+                // textWriter.WriteLine(newCart.ToString());
+                // textWriter.Close();
                 Console.WriteLine($"You have successfully added your product to cart");
+                count++;
+                RefreshFile();
+
             }
 
 
@@ -93,6 +100,24 @@ namespace ECommerceApp.Repositories
             }
 
             return total;
+        }
+        private void RefreshFile()
+        {
+            TextWriter writer = new StreamWriter("Cart.txt");
+            foreach (var item in carts)
+            {
+                writer.WriteLine(item);
+            }
+            writer.Flush();
+            writer.Close();
+        }
+        private void LoadFile()
+        {
+            StreamReader reader = new StreamReader("Cart.txt");
+            while(!reader.EndOfStream){
+                carts.Add(Carts.FormatLine(reader.ReadLine()));
+            }
+            reader.Close();
         }
 
         // public Carts ClearCart()

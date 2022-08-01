@@ -1,0 +1,4 @@
+1	01	Sardine	450	5
+1	01	Milo	80	3
+1	01	Sardine	700	12
+2	02	Milk	40	9

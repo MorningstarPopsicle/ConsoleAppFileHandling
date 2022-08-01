@@ -119,6 +119,24 @@ namespace ECommerceApp.Menu
             string lName = Console.ReadLine();
             Console.WriteLine("Enter email here: ");
             string email = Console.ReadLine();
+            string check = "@";
+            bool isIn = email.Contains(check);
+            while(!isIn)
+            {
+                Console.WriteLine("Invalid Input, enter email again");
+                email = Console.ReadLine();
+                isIn = email.Contains(check);
+            }
+            foreach (var item in customerRepo.customers)
+            {
+                if(item.Email == email)
+                {
+                    Console.WriteLine("This Email is not available, enter another username");
+                    email = Console.ReadLine();
+                }
+            }
+            Console.WriteLine("Enter password ");
+            string password = Console.ReadLine();
             Console.WriteLine("Choose Gender(1,2,3): ");
             int i = 1;
             foreach (Gender genderValue in Enum.GetValues(typeof(Gender)))
@@ -134,8 +152,6 @@ namespace ECommerceApp.Menu
                 Console.WriteLine("Invalid format");
                 Console.WriteLine("Enter date of birth again (yyyy-mm-dd):");
             }
-            Console.WriteLine("Enter password ");
-            string password = Console.ReadLine();
             Console.WriteLine("Enter Phone number: ");
             string cellNo = Console.ReadLine();
             Console.WriteLine("Enter address: ");
@@ -143,7 +159,7 @@ namespace ECommerceApp.Menu
             Console.WriteLine("Enter Next of Kin");
             string nextofKin = Console.ReadLine();
 
-            customerRepo.Register(fName, lName, email, gender, dateOfBirth, password, cellNo,
+            customerRepo.Register(fName, lName, email, password, gender, dateOfBirth,  cellNo,
                                 address, nextofKin);
             Console.WriteLine($"You have been successfully registered");
         }

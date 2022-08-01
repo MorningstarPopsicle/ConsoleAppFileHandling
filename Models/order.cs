@@ -25,7 +25,10 @@ namespace ECommerceApp.Models
         {
             var props = line.Split('\t');
             return new Order(int.Parse(props[0]), int.Parse(props[1]), props[2], props[3],  decimal.Parse(props[4]) );
-
+        }
+         public override string ToString()
+        {
+            return $"{Id}\t{CustomerId}\t{Email}\t{CustomerName}\t{TotalPrice}";
         }
         
 
